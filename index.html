@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .main {
+            width: 100%;
+            height: 100vh;
+            background-color: #212121;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 700px;
+            min-height: 300px;
+            background-color: #515151;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .password {
+            color: #2c2c2c;
+            font-family: system-ui;
+            letter-spacing: 8px;
+            font-size: 20px;
+            text-align: center;
+            font-weight: 400;
+            background: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            min-height: 45px;
+
+        }
+
+        .buttons {
+            margin-top: 40px;
+        }
+
+        .button {
+            padding: 8px;
+            margin: 8px;
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: larger;
+        }
+
+        #length {
+            padding: 8px 10px;
+            width: 50px;
+            outline: none;
+            border-radius: 50px;
+            border: 0;
+        }
+
+        input,
+        textarea {
+            padding: 5px;
+            width: 40px;
+            margin: 0 10px 0 0
+        }
+
+        input.apple-switch {
+            position: relative;
+            appearance: none;
+            outline: none;
+            width: 50px;
+            height: 30px;
+            background-color: #ffffff;
+            border: 1px solid #D9DADC;
+            border-radius: 50px;
+            box-shadow: inset -20px 0 0 0 #ffffff;
+            transition-duration: 200ms;
+            margin: 0 10px 0 0
+        }
+
+        input.apple-switch:after {
+            content: "";
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 26px;
+            height: 26px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        input.apple-switch:checked {
+            border-color: #4ED164;
+            box-shadow: inset 20px 0 0 0 #4ED164;
+        }
+
+        input.apple-switch:checked:after {
+            left: 20px;
+            box-shadow: -2px 4px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .generate {
+            display: flex;
+            justify-content: center;
+        }
+
+        .gntbtn {
+            padding: 12px;
+            margin: 8px;
+            display: flex;
+            align-items: center;
+            color: black;
+            font-size: larger;
+            border-radius: 10px;
+            border: 0;
+            outline: 0;
+        }
+
+        .gntbtn:active {
+            background: #4ed164;
+        }
+
+        #errormsg {
+            text-align: center;
+            margin-top: 5px;
+            color: red;
+            letter-spacing: 3px;
+            font-family: system-ui;
+        }
+
+        .password i {
+            display: flex;
+            flex-direction: row-reverse;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="container">
+            <div class="password"></div>
+            <div id="errormsg"></div>
+            <div class="buttons">
+                <div class="button length"><input type="number" name="length" id="length" value="6"> Enter the length of
+                    the password</div>
+                <div class="button number"><input type="checkbox" class="apple-switch" name="number" id="number"
+                        checked>Number</div>
+                <div class="button symbol"><input type="checkbox" class="apple-switch" name="symbols" id="symbols"
+                        checked>Symbol</div>
+                <div class="button lettercase"><input type="checkbox" class="apple-switch" name="case" id="case"
+                        checked>Uppercase</div>
+            </div>
+            <div class="generate">
+                <button type="submit" class="gntbtn" id="gntbtn">Generate</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const gtnbtn = document.getElementById('gntbtn');
+        const lengthInput = document.getElementById('length');
+        let passwordArea = document.querySelector('.password');
+        const errorMsg = document.getElementById('errormsg');
+        const numberCheck = document.getElementById('number');
+        const symbolCheck = document.getElementById('symbols');
+        const letterCheck = document.getElementById('case');
+
+
+        gtnbtn.addEventListener('click', () => {
+            const lowercaseChar = 'abcdefghijklmnopqrstuvwxyz'
+            const uppercaseChar = letterCheck.checked ? lowercaseChar.toUpperCase() : "";
+            const numbersChar = numberCheck.checked ? '1234567890' : "";
+            const symbolsChar = symbolCheck.checked ? `!@#$%^&*()_+-=[]{}|;':\"\\,.<>/?"` : "";
+            const genPass = lowercaseChar + uppercaseChar + numbersChar + symbolsChar;
+            let lengthNumb = Number(document.querySelector('#length').value);
+            let password = '';
+
+            if (lengthNumb < 6 || lengthNumb > 30) {
+                errorMsg.style.color = 'red';
+                errorMsg.innerHTML = "Please select password length between 6 to 30";
+                passwordArea.innerHTML = '';
+            }
+            else {
+                for (let i = 0; i < lengthNumb; i++) {
+                    let randomIndex = Math.floor(Math.random() * genPass.length + 1);
+                    password += genPass.charAt(randomIndex);
+                }
+                passwordArea.innerHTML = password;
+                errorMsg.style.color = 'white';
+                errorMsg.innerHTML = `<i class="fa-regular fa-copy"></i>`;
+
+            }
+
+            document.querySelector('i').addEventListener('click',()=>{
+                navigator.clipboard.writeText(password);
+                errorMsg.innerHTML = 'Password Copied';
+                setTimeout(() => {
+                    errorMsg.innerHTML = `<i class="fa-regular fa-copy"></i>`;
+                }, 1000);
+            })
+
+
+        })
+    </script>
+    <script src="https://kit.fontawesome.com/20165ec3b8.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+
